@@ -1,0 +1,529 @@
+/*内容要求：
+1.用户（管理员）可以注册账号，进行学生成绩信息的管理
+2.用户（管理员）可以根据学生信息的变更，添加学生成绩信息
+3.用户（管理员）可以根据学生信息的变更，修改学生成绩信息
+4.用户（管理员）可以根据学生信息的变更，删除学生成绩信息
+5.用户（管理员）可以根据自己的需要查询相关的学生成绩信息*/
+
+#include<iostream>
+#include<string>
+#include<stdlib.h>
+#include<fstream>
+using namespace std;
+
+int i;//循环变量
+
+class student 
+{
+	string name;//姓名
+	int number;//学号
+	int math_grape;//数学成绩
+	int english_grape;//英语成绩
+public:
+	student()
+	{
+		//cout<<"请输入姓名："<<endl;
+		//cin>>name;
+		//cout<<"请输入学号："<<endl;
+		//cin>>number;
+		//cout<<"请输入数学成绩："<<endl;
+		//cin>>math_grape;
+		//cout<<"请输入英语成绩："<<endl;
+		//cin>>english_grape;
+	}
+	student(string na,int nu,int ma,int en):name(na),number(nu),math_grape(ma),english_grape(en){}
+	void put_name(string na){name=na;}
+	void put_number(int nu){number=nu;}
+	void put_math_grape(int ma){math_grape=ma;}
+	void put_english_grape(int en){english_grape=en;}
+	string get_name(){return name;}
+	int get_number(){return number;}
+	int get_math_grape(){return math_grape;}
+	int get_english_grape(){return english_grape;}
+	void print_all()
+	{
+		cout<<"此学生基本信息如下："<<endl;
+		cout<<"姓名："<<name<<endl;
+		cout<<"学号："<<number<<endl;
+		cout<<"数学成绩："<<math_grape<<endl;
+		cout<<"英语成绩："<<english_grape<<endl;
+	}
+	bool Aim_search_1(string n)
+	{
+		if(n==name) return true;
+		return false;
+	}
+	bool Aim_search_2(int u)
+	{
+		if(u==number) return true;
+		return false;
+	}
+	
+};
+
+class administrator;
+
+const short max_size=50;
+class datebase
+{
+	student stu[max_size];
+	short size;
+public:
+	datebase(){size=0;}
+
+	friend administrator;
+	bool add_()//添加
+	{
+		//cout<<size<<endl;
+		if(size==max_size)
+		{
+			cout<<"学生人数已满，不能继续添加。"<<endl;
+			return false;
+		}
+		cout<<"请输入姓名："<<endl;
+		string na;
+		cin>>na;
+		stu[size].put_name(na);
+		cout<<"请输入学号："<<endl;
+		int nu;
+		cin>>nu;
+		stu[size].put_number(nu);
+		cout<<"请输入数学成绩："<<endl;
+		int ma;
+		cin>>ma;
+		stu[size].put_math_grape(ma);
+		cout<<"请输入英语成绩："<<endl;
+		int en;
+		cin>>en;
+		stu[size].put_english_grape(en);
+
+		ofstream outfile("学生信息.dat",ios::out);
+		if(!outfile)
+		{
+			cerr<<"open error!"<<endl;
+			exit(1);
+		}
+		outfile<<"学生"<<i<<"的信息是："<<endl;
+		outfile<<"学生姓名： "<<na;//<<
+		outfile<<"学生学号： "<<nu;
+		outfile<<"学生数学成绩： "<<ma;
+		outfile<<"学生英语成绩： "<<en;
+		outfile.close();
+
+		
+		cout<<"添加成功！"<<endl;
+		size++;
+		//cout<<size<<endl;
+		return true;
+		
+	}
+	void looklook()
+	{
+		for(i=0;i<=size-1;i++)
+		{
+			stu[i].print_all();
+		}
+	}
+	void modify_()//修改
+	{
+		cout<<"请输入需要修改的学生学号或姓名："<<endl<<"1.输入学生姓名修改   2.输入学生学号修改";
+		short choice2;
+		bool result=false;
+		cin>>choice2;//只有1.2两种被允许
+		switch (choice2)
+		{
+			case 1:
+			{
+				cout<<"请输入想修改的学生姓名："<<endl;//<<"case1"
+				string a1;
+				int y;//作用同x
+				cin>>a1;
+				for(i=0;i<=size;i++)
+				{
+					if(stu[i].Aim_search_1(a1)) 
+					{
+						stu[i].print_all();
+						result=true;
+						y=i;
+						break;
+					}
+				}
+				if(result==false) cout<<"没有找到对应学生。";
+				cout<<"你想修改什么："<<endl<<"1.学号  2.姓名   3.数学成绩  4.英语成绩";
+				short choice4;
+				cin>>choice4;
+				switch(choice4)
+				{	case 1:
+					{
+						int xuehao;
+						cout<<"请输入修改后的学号： "<<endl;
+						cin>>xuehao;
+						stu[y].put_number(xuehao);
+						cout<<"修改完毕！"<<endl;
+						break;
+					}
+					case 2:
+						{
+							string xingming;
+							cout<<"请输入修改后的姓名： "<<endl;
+							cin>>xingming;
+							stu[y].put_name(xingming);
+							cout<<"修改完毕！"<<endl;
+							break;
+						}
+					case 3:
+						{
+							int shuxue;
+							cout<<"请输入修改后的数学成绩： "<<endl;
+							cin>>shuxue;
+							stu[y].put_math_grape(shuxue);
+							cout<<"修改完毕！"<<endl;
+							break;
+						}
+					case 4:
+						{
+							int yingyu;
+							cout<<"请输入修改后的英语成绩： "<<endl;
+							cin>>yingyu;
+							stu[y].put_english_grape(yingyu);
+							cout<<"修改完毕！"<<endl;
+							break;
+						}
+					default: cout<<"你的操作有误。";
+				}
+				break;
+			}
+			case 2:
+			{
+				cout<<"请输入想修改的学生学号："<<endl;
+				int b1;
+				int x;//用来记录对象
+				cin>>b1;
+				for(i=0;i<=size;i++)
+				{
+					if(stu[i].Aim_search_2(b1)) 
+					{
+						stu[i].print_all();
+						result=true;
+						x=i;//记下这个对象
+						break;
+					}
+				}
+				if(result==false) 
+				{
+					cout<<"没有找到对应学生。";
+					break;
+				}
+				cout<<"你想修改什么："<<endl<<"1.学号  2.姓名   3.数学成绩  4.英语成绩";
+				short choice3;
+				cin>>choice3;
+				switch(choice3)
+				{	case 1:
+						{
+							int xuehao;
+							cout<<"请输入修改后的学号： "<<endl;
+							cin>>xuehao;
+							stu[x].put_number(xuehao);
+							cout<<"修改完毕！"<<endl;
+							break;
+						}
+					case 2:
+						{
+							string xingming;
+							cout<<"请输入修改后的姓名： "<<endl;
+							cin>>xingming;
+							stu[x].put_name(xingming);
+							cout<<"修改完毕！"<<endl;
+							break;
+						}
+					case 3:
+						{
+							int shuxue;
+							cout<<"请输入修改后的数学成绩： "<<endl;
+							cin>>shuxue;
+							stu[x].put_math_grape(shuxue);
+							cout<<"修改完毕！"<<endl;
+							break;
+						}
+					case 4:
+						{
+							int yingyu;
+							cout<<"请输入修改后的英语成绩： "<<endl;
+							cin>>yingyu;
+							stu[x].put_english_grape(yingyu);
+							cout<<"修改完毕！"<<endl;
+							break;
+						}
+					default: cout<<"你的操作有误。";//<<"1"
+				}
+				break;
+			}
+			default: cout<<"你的操作有误。";//<<"2"
+		}
+	}
+	void delete_()//删除
+	{
+		cout<<"请输入需要删除的学生学号或姓名："<<endl<<"1.输入学生姓名删除   2.输入学生学号删除";
+		short choice5;
+		bool result1=false;
+		cin>>choice5;//只有1.2两种被允许
+		switch (choice5)
+		{
+			case 1:
+			{
+				cout<<"请输入想删除的学生姓名："<<endl;
+				string a2;
+				int z;//作用同x
+				cin>>a2;
+				for(i=0;i<=size;i++)
+				{
+					if(stu[i].Aim_search_1(a2)) 
+					{
+						stu[i].print_all();
+						result1=true;
+						z=i;
+						break;
+					}
+				}
+				if(result1==false) 
+				{
+					cout<<"没有找到对应学生。";
+					break;
+				}
+				char choice6;
+				cout<<"你是否要删除这个学生： "<<endl<<"1.y（yes）,2.n(no)    请输入y或者n;"<<endl;
+				cin>>choice6;
+				if(choice6=='y')
+				{
+					for(i=z;i<=size-1;i++)
+					{
+						stu[i]=stu[i+1];
+					}
+					size--;
+					cout<<"删除成功！"<<endl;
+					break;
+					//system("pause");
+				}
+			}
+			case 2:
+			{
+				cout<<"请输入想删除的学生学号："<<endl;
+				int b2;
+				int z;//作用同x,y,z
+				cin>>b2;
+				for(i=0;i<=size;i++)
+				{
+					if(stu[i].Aim_search_2(b2)) 
+					{
+						stu[i].print_all();
+						result1=true;
+						z=i;
+						break;
+					}
+				}
+				if(result1==false) cout<<"没有找到对应学生。";
+				char choice6;
+				cout<<"你是否要删除这个学生： "<<endl<<"1.y（yes）,2.n(no)    请输入y或者n;"<<endl;
+				cin>>choice6;
+				if(choice6=='y')
+				{
+					for(i=z;i<=size-1;i++)
+					{
+						stu[i]=stu[i+1];
+					}
+					size--;
+					cout<<"删除成功！"<<endl;
+					//system("pause");
+				}
+				
+				break;
+			}
+			default : cout<<"你的操作有误。";
+		}
+
+	}
+	void search_()//查询
+	{
+		short choice;
+		do
+		{
+			cout<<"请问你要以什么条件查询。"<<endl<<"1.姓名   2.学号";
+			cin>>choice;
+		}while(choice!=1&&choice!=2);
+		bool result=false;
+		if(choice==1)
+		{
+			cout<<"请输入姓名： "<<endl;
+			string na;
+			cin>>na;
+			for(int i=0;i<=size;i++)
+			{
+				if(stu[i].Aim_search_1(na)) 
+				{
+					stu[i].print_all();
+					result=true;
+					break;
+				}
+			}
+			if(result==false) cout<<"没有找到对应学生。";
+		}
+		else if(choice==2)
+		{
+			cout<<"请输入学号： "<<endl;
+			int nu;
+			cin>>nu;
+			for(int i=0;i<=size;i++)
+			{
+				if(stu[i].Aim_search_2(nu))
+				{
+					stu[i].print_all();
+					result=true;
+					break;
+				}
+			}
+			if(result==false) cout<<"没有找到对应学生。";
+		}
+		else cout<<"你的操作有误。";
+	}
+};
+
+
+
+class administrator
+{
+	int number;//账号
+	string  secret;//密码
+	string mailbox;//邮箱
+	string real_name;//姓名
+public:
+	administrator()
+	{
+		cout<<"请先注册账号"<<endl;
+		cout<<"请输入账号："<<endl;
+		cin>>number;
+		cout<<"请输入真实姓名："<<endl;
+		cin>>real_name;
+		cout<<"请输入邮箱："<<endl;
+		cin>>mailbox;
+		string s;
+		do
+		{
+			cout<<"请输入密码："<<endl;
+			cin>>secret;
+			cout<<"请再次输入密码确认："<<endl;
+			
+			cin>>s;
+		}while(s!=secret);
+		cout<<"注册成功"<<endl;
+		
+		int number1;
+		string secret1;
+		do
+		{
+			cout<<"请登录你的账号"<<endl;
+			cout<<"请输入账号："<<endl;
+			cin>>number1;
+			cout<<"请输入密码："<<endl;
+			cin>>secret1;
+		}while(number!=number1&&secret!=secret1);
+	}
+	/*void express()
+	{
+		cout<<number<<endl;
+		cout<<real_name<<endl;
+		cout<<secret<<endl;
+		cout<<mailbox<<endl;
+	}*/
+	void add_student(datebase &n)//添加
+	{
+		
+		cout<<"请输入要添加的学生人数： "<<endl;
+		short add;
+		cin>>add;
+		for(i=1;i<=add;i++)
+		{
+			n.add_();
+			
+		
+
+		}
+	}
+	void modify_student(datebase &n)//修改
+	{
+		cout<<"请输入要修改的学生人数： "<<endl;
+		short add2;
+		cin>>add2;
+		for(i=1;i<=add2;i++)
+		{
+			//cout<<i<<"这是循环"<<endl;
+			n.modify_();
+			//cout<<i<<"这是循环"<<endl;
+		}
+	}
+	void delete_student(datebase &n)//删除
+	{
+		cout<<"请输入要删除的学生人数： "<<endl;
+		short add2;
+		cin>>add2;
+		for(i=1;i<=add2;i++)
+		{
+			n.delete_();
+		}
+	}
+	void search_student(datebase &n)//查询
+	{
+		bool re=true;
+		while(re)
+		{
+			n.search_();
+			cout<<"是否继续查询： "<<endl<<"1.继续查询     2.结束查询"<<endl;
+			short a;
+			cin>>a;
+			if(a==1) re=true;
+			else if(a==2) re=false;
+			else cout<<"你的操作有误。";
+		}
+	}
+};
+
+int main()
+{
+	administrator a;
+	datebase base1;
+	cout<<"      -------------欢迎使用成绩管理系统--------------\n\n";
+	cout<<"              1.添加学生\n";
+	cout<<"              2.查找学生\n";
+	cout<<"              3.修改学生\n";
+	cout<<"              4.删除学生\n";
+	cout<<"              5.显示全部\n";
+	cout<<"              6.退出\n";
+	short choice;
+	//do
+	//{
+		system("cls");
+		cout<<"      -------------欢迎使用成绩管理系统--------------\n\n";
+		cout<<"              1.添加学生\n";
+		cout<<"              2.查找学生\n";
+		cout<<"              3.修改学生\n";
+		cout<<"              4.删除学生\n";
+		cout<<"              5.显示全部\n";
+		cout<<"              6.退出\n";
+		
+		bool quit=true;
+		while(quit)
+		{
+			cin>>choice;
+			switch(choice)
+			{
+				case 1:a.add_student(base1);break;
+				case 2:a.search_student(base1);break;
+				case 3:a.modify_student(base1);break;
+				case 4:a.delete_student(base1);break;
+				case 5:base1.looklook();break;
+				case 6:quit=false;break;
+				default:break;// cout<<"你的操作有误。";
+			}
+		}
+	//}while(choice<1||choice>7);
+	return 0;
+}
